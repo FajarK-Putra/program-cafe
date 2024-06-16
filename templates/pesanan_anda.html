@@ -77,11 +77,9 @@
             border-color: #004085;
         }
         #statusNotification {
-            display: none;
             margin-top: 20px;
             padding: 10px;
             border-radius: 5px;
-            background-color: #28a745;
             color: white;
             text-align: center;
         }
@@ -125,29 +123,45 @@
         <p>{{ error }}</p>
         {% endif %}
         <div class="btn-container">
-            <a href="/member" class="btn btn-primary">Kembali</a>
+            <a id="btn-kembali" style="background-color: gray;" class="btn btn-primary">Kembali</a>
         </div>
-        <div id="statusNotification">Pesanan Anda telah siap!</div>
+        <div id="statusNotification" style="background-color: red;">Pesanan Anda Sedang Di Proses</div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Simpan referensi ke interval
+            let orderStatusInterval;
+        
             function checkOrderStatus() {
                 $.ajax({
                     url: '/check_order_status/{{ pesanan._id }}',
                     method: 'GET',
                     success: function(response) {
                         if (response.status === 'success' && response.status_siap) {
-                            $('#statusNotification').fadeIn();
+                            $('#statusNotification').fadeOut();
+                            setTimeout(()=>{
+                                const statusnot = document.getElementById('statusNotification');
+                                statusnot.textContent = "Pesanan Anda telah siap!";
+                                statusnot.style.backgroundColor = "#28a745";
+                            },1000)
+                            setTimeout(() => {
+                                $('#statusNotification').fadeIn();
+                            }, 2000);
+                            const btn_kembali = document.getElementById('btn-kembali');
+                            btn_kembali.href="/member"
+                            btn_kembali.removeAttribute('style');
+                            // Hentikan interval setelah mendapatkan respon sukses
+                            clearInterval(orderStatusInterval);
                         }
                     }
                 });
             }
-
-            // Check status every 5 seconds
-            setInterval(checkOrderStatus, 5000);
-        });
+        
+            // Mulai interval untuk memeriksa status setiap 5 detik
+            orderStatusInterval = setInterval(checkOrderStatus, 5000);
+        });        
     </script>
 </body>
 </html>

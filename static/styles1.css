@@ -6,19 +6,21 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Prevent horizontal scrolling */
+    background-image: url("/static/imgaset/bg1.png");
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    height: 100vh; 
+    background-attachment: fixed;
 }
 
 .navbar {
     background-color: #343a40;
-    position: sticky;
+    position: fixed;
     top: 0;
+    width: 100%;
     z-index: 1000;
     transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-.navbar.scrolled {
-    background-color: #343a40;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-toggler {
@@ -50,12 +52,13 @@ body {
 }
 
 .container {
-    margin-top: 50px;
+    margin-top: 100px; /* Adjusted to prevent overlapping with navbar */
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
     background-color: #ffffff;
     padding: 20px;
+    padding-top: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

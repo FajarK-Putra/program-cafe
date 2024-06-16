@@ -11,9 +11,10 @@
         body {
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             font-family: 'Roboto', sans-serif;
+            padding-top: 70px; /* To ensure content is not hidden behind fixed navbar */
         }
         .container {
-            margin-top: 50px;
+            margin-top: 20px;
             background-color: white;
             padding: 30px;
             border-radius: 15px;
@@ -22,6 +23,10 @@
         }
         .navbar {
             background-color: #343a40;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         .navbar .navbar-brand {
             color: #ffc107;
@@ -260,14 +265,6 @@
             var checkboxes = document.getElementsByName('member_ids');
             for (var checkbox of checkboxes) {
                 checkbox.checked = !checkbox.checked;
-            }
-        }
-
-        function deleteAll() {
-            if (confirm('Apakah Anda yakin ingin menghapus semua anggota?')) {
-                // Here, you can add code to handle the deletion of all members.
-                // For example, making an AJAX call to the server to delete all members.
-                alert('Semua anggota telah dihapus.');
             }
         }
     </script>

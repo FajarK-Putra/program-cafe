@@ -25,6 +25,11 @@ pesanan_collection = client.menu.pesanan
 # Tambahkan enumerate ke Jinja2 environment
 app.jinja_env.globals.update(enumerate=enumerate)
 
+@app.after_request
+def add_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
 @app.route('/')
 def login_page():
     current_queue_number = pesanan_collection.count_documents({})  # Mendapatkan jumlah total pesanan sebagai nomor antrian saat ini
@@ -93,7 +98,7 @@ def admin():
     if 'username' in session and session['username'] == 'admin':
         return render_template('admin.html')
     else:
-        return redirect("/login")
+        return redirect(url_for('login_page'))
 
 @app.route('/load_data_admin')
 def load_data_admin():
@@ -278,7 +283,7 @@ def antrian():
     if 'username' in session and session['username'] == 'admin':
         return render_template('antrian.html')
     else:
-        return redirect("/login")
+        return redirect(url_for('login_page'))
 
 @app.route('/load_data_antrian')
 def load_data_antrian():
@@ -370,4 +375,4 @@ def admin_members():
         return redirect(url_for('login_page'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=False)
+    socketio.run(app, debug=True)

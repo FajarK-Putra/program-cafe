@@ -18,9 +18,10 @@
             padding: 0; 
             background-attachment: fixed;
             font-family: 'Roboto', sans-serif;
+            padding-top: 70px; /* To ensure content is not hidden behind fixed navbar */
         }
         .container {
-            margin-top: 50px;
+            margin-top: 20px;
             background-color: white;
             padding: 30px;
             border-radius: 15px;
@@ -29,6 +30,10 @@
         }
         .navbar {
             background-color: #343a40;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
         .navbar .navbar-brand {
             color: #ffc107;
