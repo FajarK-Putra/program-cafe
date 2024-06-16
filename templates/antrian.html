@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Antrian Pesanan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        body {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #dee2e6;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar .navbar-brand {
+            color: #ffc107;
+            font-family: 'Pacifico', cursive;
+        }
+        .navbar .navbar-nav .nav-link {
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+        .navbar .navbar-nav .nav-link:hover {
+            color: #ffc107;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-family: 'Pacifico', cursive;
+            color: #343a40;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+        }
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .btn-ready, .btn-pay, .btn-back {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            padding: 5px 10px;
+        }
+        .btn-ready {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-ready:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: scale(1.05);
+        }
+        .btn-ready.ready {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-ready.ready:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .btn-pay {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: white;
+        }
+        .btn-pay:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+            transform: scale(1.05);
+        }
+        .btn-pay:focus, .btn-pay:active {
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-ready:focus, .btn-ready:active {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-ready.ready:focus, .btn-ready.ready:active {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-back {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background-color: #fdfd34;
+            border-color: #fdfd34;
+            transform: scale(1.05);
+            color: #000000;
+        }
+        .btn-back:focus, .btn-back:active {
+            background-color: #fdfd34 !important;
+            border-color: #fdfd34 !important;
+            color: rgb(3, 3, 3) !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        @media (max-width: 1000px) {
+            .container {
+                padding: 20px;
+                margin-top: 30px;
+            }
+            .header {
+                font-size: 2rem;
+            }
+            .btn-back, .btn-ready, .btn-pay {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+            .table th, .table td {
+                font-size: 0.875rem;
+                padding: 10px;
+            }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .header {
+                font-size: 1.75rem;
+            }
+            .btn-back, .btn-ready, .btn-pay {
+                font-size: 0.7rem;
+                padding: 3px 6px;
+            }
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table th, .table td {
+                font-size: 0.75rem;
+                padding: 8px;
+            }
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 10px;
+            }
+            .header {
+                font-size: 1.5rem;
+            }
+            .btn-back, .btn-ready, .btn-pay {
+                font-size: 0.65rem;
+                padding: 2px 5px;
+            }
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table th, .table td {
+                font-size: 0.7rem;
+                padding: 6px;
+            }
+            .table {
+                table-layout: fixed;
+                width: 100%;
+            }
+            .table th, .table td {
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/admin">Admin Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/tambah_menu_form"><i class="fas fa-plus"></i> Tambah Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/pesanan"><i class="fas fa-receipt"></i> Pesanan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/antrian"><i class="fas fa-list"></i> Antrian</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/members"><i class="fas fa-users"></i> Data Member</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1>Antrian Pesanan</h1>
+        </div>
+        <a href="/admin" class="btn btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard Utama</a>
+        <div id="place_for_xrc23a" class="table-responsive"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
+    <script>
+        function markAsReady(id, button) {
+            $.ajax({
+                url: '/mark_as_ready',
+                method: 'POST',
+                data: {id: id},
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('Pesanan telah siap!');
+                        button.classList.add('ready');
+                        button.textContent = 'Sudah Siap';
+                    } else if (response.status === 'need payment') {
+                        alert('Konfirmasi pembayaran terlebih dahulu');
+                    } else {
+                        alert('Gagal memperbarui status pesanan.');
+                    }
+                }
+            });
+        }
+
+        function confirmPayment(id, button) {
+            $.ajax({
+                url: '/confirm_payment',
+                method: 'POST',
+                data: {id: id},
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert('Pembayaran telah dikonfirmasi!');
+                        button.closest('div').innerHTML = '<span>Sudah Bayar</span>';
+                    } else {
+                        alert('Gagal mengonfirmasi pembayaran.');
+                    }
+                }
+            });
+        }
+        
+    </script>
+
+    <script>
+        async function LoadTable() {
+            while (true) {
+                try {
+                    const data = await $.ajax({
+                        url: "/load_data_antrian",
+                        type: "GET",
+                    });
+                    $("#place_for_xrc23a").html(data);
+                    console.log(data)
+                } catch (error) {
+                    console.log(error)
+                }
+                await new Promise(resolve => setTimeout(resolve, 4000));
+            }
+        }
+
+        // Event ketika halaman pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            LoadTable();
+        });
+
+        // Event ketika halaman muncul kembali dari cache
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                LoadTable();
+            }
+        });
+    </script>
+</body>
+</html>

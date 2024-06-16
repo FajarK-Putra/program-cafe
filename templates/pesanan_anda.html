@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pesanan Anda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #343a40;
+        }
+        .order-number {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        .order-info, .total-price {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .order-info p, .total-price p {
+            display: flex;
+            justify-content: space-between;
+        }
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .item-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .btn-container {
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        #statusNotification {
+            display: none;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+        }
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                margin-top: 20px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            .order-number {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Struk Pesanan</h1>
+        <div class="order-number">Nomor Antrian: {{ nomor_antrian }}</div>
+        {% if pesanan %}
+        <div class="order-info">
+            <p><span>Nama</span><span>{{ pesanan.username }}</span></p>
+            <p><span>Tanggal & Jam</span><span>{{ pesanan.tanggal.strftime('%d-%m-%Y %H:%M') }}</span></p>
+            <p><span>Metode Pembayaran</span><span>{{ pesanan.payment_method }}</span></p>
+        </div>
+        <ul class="item-list">
+            {% for item in pesanan['items'] %}
+            <li>
+                <span>{{ item['name'] }} x {{ item['quantity'] }}</span>
+                <span>Rp. {{ item['price'] }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="total-price">
+            <p><strong>Total</strong><strong>Rp. {{ pesanan['total'] }}</strong></p>
+        </div>
+        {% else %}
+        <p>{{ error }}</p>
+        {% endif %}
+        <div class="btn-container">
+            <a href="/member" class="btn btn-primary">Kembali</a>
+        </div>
+        <div id="statusNotification">Pesanan Anda telah siap!</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function checkOrderStatus() {
+                $.ajax({
+                    url: '/check_order_status/{{ pesanan._id }}',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.status === 'success' && response.status_siap) {
+                            $('#statusNotification').fadeIn();
+                        }
+                    }
+                });
+            }
+
+            // Check status every 5 seconds
+            setInterval(checkOrderStatus, 5000);
+        });
+    </script>
+</body>
+</html>

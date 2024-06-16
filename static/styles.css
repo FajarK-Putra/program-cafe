@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('/static/imgaset/bg1.png') no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: none;
+}
+
+/* Mobile First Design */
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 1000px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    margin: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.info-section, .login-section {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.info-section {
+    background-color: rgba(52, 58, 64, 0.85);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.info-section h2, .login-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    transition: font-size 0.3s ease;
+}
+
+.info-section p, .login-section p {
+    font-size: 1rem;
+    transition: font-size 0.3s ease;
+}
+
+.info-section strong {
+    font-size: 2rem;
+    display: block;
+    margin-top: 10px;
+    transition: font-size 0.3s ease;
+}
+
+.login-section form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-section input[type="text"],
+.login-section input[type="email"],
+.login-section input[type="password"],
+.login-section button {
+    width: calc(100% - 24px);
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-section input[type="text"]:focus,
+.login-section input[type="email"]:focus,
+.login-section input[type="password"]:focus {
+    border-color: #e3dc0a;
+    outline: none;
+    box-shadow: 0 0 5px rgba(232, 207, 11, 0.5);
+}
+
+.login-section button {
+    background-color: #eeff00;
+    color: #000000;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.login-section button:hover {
+    background-color: #acb202;
+}
+
+.login-section a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: #000300;
+    margin-top: 10px;
+    transition: color 0.3s ease;
+}
+
+.login-section a:hover {
+    color: rgb(221, 255, 0);
+    text-decoration: underline;
+}
+
+.login-section .error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.login-section .success {
+    color: green;
+    margin-bottom: 10px;
+}
+
+/* Media queries untuk tablet dan desktop */
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+    }
+
+    .info-section, .login-section {
+        width: 50%;
+    }
+
+    .info-section h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+
+    .info-section p {
+        font-size: 1.2rem;
+    }
+
+    .info-section strong {
+        font-size: 3rem;
+    }
+
+    .login-section h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+}

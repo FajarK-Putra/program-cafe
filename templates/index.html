@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Minuman</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-image: url("/static/imgaset/bg1.png");
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            height: 100vh; 
+            margin: 0; 
+            padding: 0; 
+            background-attachment: fixed;
+            font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            background-image: url("/static/imgaset/bg1.png");
+            background-position: center; 
+            background-attachment: fixed;
+            background-size: cover; 
+            background-repeat: no-repeat; 
+            border-radius: 10px;
+            box-shadow: 0 0 10px #343a40;
+        }
+        .menu-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .menu-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .menu-item img {
+            width: 150px;
+            height: 150px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .menu-item-details {
+            flex-grow: 1;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .quantity button {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            border: none;
+            background-color: rgb(226, 196, 27);
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+        }
+        .quantity input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(160, 146, 146, 0.5);
+        }
+        .stok-habis-text {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        @media (min-width: 992px) {
+            .navbar-expand-lg .navbar-nav .nav-link {
+                padding-right: 1.3rem;
+                padding-left: .5rem;
+            }
+        }
+        .payment-popup,
+        .login-popup {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .payment-popup-content,
+        .login-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .payment-popup-content h2,
+        .login-popup-content h2 {
+            margin-bottom: 20px;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #007bff;
+        }
+        .payment-methods {
+            text-align: left;
+        }
+        .payment-methods label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+        .payment-methods input[type="radio"] {
+            margin-right: 10px;
+        }
+        .payment-methods label:hover {
+            background-color: #f1f1f1;
+        }
+        .payment-methods label.active {
+            background-color: #e7f3ff;
+            border-color: #007bff;
+        }
+        .payment-details {
+            display: none;
+            margin-top: 10px;
+        }
+        .payment-details img {
+            display: block;
+            margin: 0 auto;
+            width: 100px;
+        }
+        .payment-details p {
+            margin: 0;
+        }
+        .btn-primary {
+            margin: 2px;
+            background-color: #ff5722; /* Customize the primary button color */
+            border-color: #ff5722;
+        }
+        .btn-primary:hover {
+            background-color: #e64a19; /* Customize the primary button hover color */
+            border-color: #d84315;
+        }
+        .btn-secondary {
+            background-color: #6c757d; /* Customize the secondary button color */
+            border-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Customize the secondary button hover color */
+            border-color: #545b62;
+        }
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeInOut 5s ease-in-out;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .checkout-notification {
+            position: relative;
+            display: inline-block;
+        }
+        .checkout-notification .badge {
+            position: absolute;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        #toggleBadge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgb(226, 196, 27);
+            color: black;
+            border-radius: 50%;
+            padding: 5px 7px;
+            font-size: 12px;
+            line-height: 1;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #keranjangBadge {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translate(50%, -50%);
+            background-color: rgb(226, 196, 27);
+            color: black;
+            border-radius: 50%;
+            padding: 5px 7px;
+            font-size: 12px;
+            line-height: 1;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body data-is-logged-in="{{ is_logged_in }}">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/member">CAFE</a>
+        <button class="navbar-toggler position-relative" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            <span id="toggleBadge" class="badge badge-danger" style="display: none;">0</span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if session['username'] %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/member" id="member">
+                        <i class="fa fa-bars"></i> Menu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/info_akun" id="info_akun">
+                        <i class="fas fa-user-alt"></i> Akun
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/riwayatpesanan" id="pesananAnda">
+                        <i class="fas fa-receipt"></i> Pesanan
+                    </a>
+                </li>
+                <li class="nav-item position-relative">
+                    <a class="nav-link" href="#" id="keranjangBaru" onclick="fetch_lock_payment();toggleDetailPesanan()">
+                        <i class="fas fa-shopping-cart"></i> Check Out 
+                        <span id="keranjangBadge" class="badge badge-danger" style="display: none;">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('login_page') }}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('signup_page') }}">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div id="place_for_xrc23c"></div>
+    </div>
+
+    <!-- Popup Elements -->
+    <div id="detailPesanan" class="payment-popup">
+        <div class="payment-popup-content">
+            <h2>Detail Pesanan</h2>
+            <table class="detail-table">
+                <tbody id="detailPesananItems"></tbody>
+                <tr class="total-price-row">
+                    <td colspan="2" style="text-align:right;">Total</td>
+                    <td id="totalHarga" style="text-align:right;"></td>
+                </tr>
+            </table>
+            <button class="btn btn-secondary back" onclick="toggleDetailPesanan()">Kembali</button>
+            <button class="btn btn-primary next" onclick="togglePembayaran()">Lanjut ke Pembayaran</button>
+        </div>
+    </div>
+
+    <div id="paymentPopup" class="payment-popup">
+        <div class="payment-popup-content">
+            <h2>Metode Pembayaran</h2>
+            <div class="payment-methods">
+                <label class="payment-option">
+                    <input type="radio" name="metode_pembayaran" value="QRIS" onclick="showQris()"> QRIS (GoPay, DANA, Ovo.)
+                </label>
+                <div id="qrisDetails" class="payment-details">
+                    <img src="{{ url_for('static', filename='imgaset/qris.png') }}" alt="QRIS">
+                </div>
+                <label class="payment-option">
+                    <input type="radio" name="metode_pembayaran" value="Rekening Bank" onclick="showBankDetails()"> Rekening Bank
+                </label>
+                <div id="bankDetails" class="payment-details">
+                    <p>Bank BCA: 1234567890</p>
+                    <p>Bank Mandiri: 0987654321</p>
+                </div>
+                <label class="payment-option">
+                    <input type="radio" name="metode_pembayaran" value="Cash" onclick="showCashDetails()"> Cash
+                </label>
+                <div id="cashDetails" class="payment-details">
+                    <p>Silahkan Bayar <span id="totalHargaCash"></span></p>
+                </div>
+                <label class="payment-option">
+                    <input type="radio" name="metode_pembayaran" value="Transfer Antar Bank" onclick="showTransferDetails()"> Transfer Antar Bank
+                </label>
+                <div id="transferDetails" class="payment-details">
+                    <p>Bank Tujuan: Bank BNI</p>
+                    <p>Nomor Rekening: 1122334455</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary back" onclick="togglePembayaranBack()">Kembali</button>
+            <button id="pesan_sekarang" class="btn btn-primary confirm" onclick="pesanSekarang()">Konfirmasi Pembayaran</button>
+        </div>
+    </div>
+
+    <div id="loginPopup" class="login-popup">
+        <div class="login-popup-content">
+            <span class="close" onclick="toggleLoginPopup()">&times;</span>
+            <h2>Anda harus login atau signup terlebih dahulu</h2>
+            <a href="{{ url_for('login_page') }}" class="btn btn-primary">Login</a>
+            <a href="{{ url_for('signup_page') }}" class="btn btn-primary">Sign Up</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        let intervalID;
+        let paymentSelected = false;
+        let isNavbarExpanded = false;
+
+        const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'True';
+
+        function toggleDetailPesanan() {
+            var detailPesanan = document.getElementById('detailPesanan');
+            if (detailPesanan.style.display === 'none' || detailPesanan.style.display === '') {
+                detailPesanan.style.display = 'flex';
+            } else {
+                detailPesanan.style.display = 'none';
+            }
+        }
+
+        function togglePembayaran() {
+            var paymentPopup = document.getElementById('paymentPopup');
+            var detailPesanan = document.getElementById('detailPesanan');
+            if (paymentPopup.style.display === 'none' || paymentPopup.style.display === '') {
+                paymentPopup.style.display = 'flex';
+                detailPesanan.style.display = 'none';
+            } else {
+                paymentPopup.style.display = 'none';
+            }
+        }
+
+        function togglePembayaranBack() {
+            var paymentPopup = document.getElementById('paymentPopup');
+            var detailPesanan = document.getElementById('detailPesanan');
+            paymentPopup.style.display = 'none';
+            detailPesanan.style.display = 'flex';
+        }
+
+        function toggleLoginPopup() {
+            var loginPopup = document.getElementById('loginPopup');
+            if (loginPopup.style.display === 'none' || loginPopup.style.display === '') {
+                loginPopup.style.display = 'flex';
+            } else {
+                loginPopup.style.display = 'none';
+            }
+        }
+
+        function tampilkanDetailPesanan() {
+            var detailPesananItems = document.getElementById('detailPesananItems');
+            var totalHarga = 0;
+            var menuItems = document.querySelectorAll('.menu-item');
+            detailPesananItems.innerHTML = '';
+            menuItems.forEach(function(item) {
+                var quantity = parseInt(item.querySelector('input[type="text"]').value);
+                if (quantity > 0) {
+                    var itemName = item.querySelector('h3').innerText;
+                    var itemPrice = parseInt(item.querySelector('.price').innerText.replace('Rp. ', '').replace('.', ''));
+                    var totalPrice = quantity * itemPrice;
+                    detailPesananItems.innerHTML += '<tr><td>' + itemName + '</td><td style="text-align:center;">' +'x '+ quantity + '</td><td style="text-align:right;">Rp. ' + totalPrice.toLocaleString() + '</td></tr>';
+                    totalHarga += totalPrice;
+                }
+            });
+            document.getElementById('totalHarga').innerText = 'Rp. ' + totalHarga.toLocaleString();
+            document.getElementById('totalHargaCash').innerText = 'Rp. ' + totalHarga.toLocaleString();
+        }
+
+        function checkPesanan() {
+            const pesananAndaButton = document.getElementById('pesananAnda');
+            const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
+            if (totalPesanan > 0) {
+                pesananAndaButton.style.display = 'block';
+            } else {
+                pesananAndaButton.style.display = 'block';
+            }
+        }
+
+        function showQris() {
+            hideAllDetails();
+            document.getElementById('qrisDetails').style.display = 'block';
+            setActiveOption('qris');
+        }
+
+        function showBankDetails() {
+            hideAllDetails();
+            document.getElementById('bankDetails').style.display = 'block';
+            setActiveOption('rekening_bank');
+        }
+
+        function showCashDetails() {
+            hideAllDetails();
+            document.getElementById('cashDetails').style.display = 'block';
+            setActiveOption('cash');
+        }
+
+        function showTransferDetails() {
+            hideAllDetails();
+            document.getElementById('transferDetails').style.display = 'block';
+            setActiveOption('transfer_antar_bank');
+        }
+
+        function hideAllDetails() {
+            document.querySelectorAll('.payment-details').forEach(div => {
+                div.style.display = 'none';
+            });
+            document.querySelectorAll('.payment-option').forEach(label => {
+                label.classList.remove('active');
+            });
+        }
+
+        function setActiveOption(value) {
+            document.querySelectorAll('input[name="metode_pembayaran"]').forEach(radio => {
+                if (radio.value === value) {
+                    paymentSelected = true;
+                    radio.parentElement.classList.add('active');
+                } else {
+                    radio.parentElement.classList.remove('active');
+                }
+            });
+        }
+
+        function pesanSekarang() {
+            const pesan_btn = document.getElementById("pesan_sekarang");
+        
+            // Periksa apakah metode pembayaran sudah dipilih
+            const selectedPaymentMethod = document.querySelector('input[name="metode_pembayaran"]:checked');
+            if (!selectedPaymentMethod) {
+                alert("Pilih metode pembayaran terlebih dahulu!");
+                return;
+            }
+        
+            // Nonaktifkan tombol dan ubah tampilannya
+            pesan_btn.disabled = true;
+            pesan_btn.style.backgroundColor = "grey";
+            pesan_btn.textContent = "Harap tunggu ...";
+        
+            const items = [];
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const quantity = parseInt(item.querySelector('input[type="text"]').value);
+                if (quantity > 0) {
+                    const itemName = item.querySelector('h3').innerText;
+                    const itemPrice = parseInt(item.querySelector('.price').innerText.replace('Rp. ', '').replace('.', ''));
+                    items.push({
+                        name: itemName,
+                        price: itemPrice,
+                        quantity: quantity
+                    });
+                }
+            });
+        
+            const totalHarga = document.getElementById('totalHarga').innerText.replace('Rp. ', '').replace(',', '');
+        
+            const orderData = {
+                items: items,
+                total: parseInt(totalHarga),
+                payment_method: selectedPaymentMethod.value
+            };
+        
+            fetch('/pesan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = `/pesanan_anda/${data.pesanan_id}`;
+                } else if (data.status === 'fail') {
+                    alert('Terjadi kesalahan: stok minuman yang anda pesan tidak cukup');
+                    pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
+                    pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
+                    pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+                } else {
+                    alert('Terjadi kesalahan: ' + data.message);
+                    pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
+                    pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
+                    pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+                pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
+                pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
+                pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+            });
+        }
+
+        function batalkanPesanan() {
+            toggleDetailPesanan();
+            resetPesanan();
+            tampilkanDetailPesanan();
+        }
+
+        function resetPesanan() {
+            document.querySelectorAll('.menu-item input[type="text"]').forEach(input => {
+                input.value = 0;
+            });
+            checkPesanan();
+            updateCartCount();
+        }
+
+        function checkPesananStatus() {
+            fetch('/check_pesanan_status', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'processing') {
+                    window.location.href = `/riwayatpesanan`;
+                } else if (data.status === 'ready') {
+                    showNotification("Pesanan telah siap!");
+                } else {
+                    toggleDetailPesanan();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerText = message;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function fetch_lock_payment() {
+            fetch('/fetch_lock_payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'lock') {
+                    window.location.href = `/pesanan_anda/${data.id}`;
+                }
+            });
+        }
+
+        function updateBadges() {
+            const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
+            const keranjangBadge = document.getElementById('keranjangBadge');
+            const toggleBadge = document.getElementById('toggleBadge');
+        
+            if (totalPesanan > 0) {
+                if (keranjangBadge) {
+                    keranjangBadge.innerText = totalPesanan;
+                    keranjangBadge.style.display = 'flex';
+                }
+                if (toggleBadge) {
+                    toggleBadge.innerText = totalPesanan;
+                    // Hanya tampilkan toggleBadge jika navbar tidak sedang terbuka
+                    if (!isNavbarExpanded) {
+                        toggleBadge.style.display = 'flex';
+                    }
+                }
+            } else {
+                if (keranjangBadge) {
+                    keranjangBadge.style.display = 'none';
+                }
+                if (toggleBadge) {
+                    toggleBadge.style.display = 'none';
+                }
+            }
+        }
+
+        function updateCartCount() {
+            const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
+            const cartCount = document.getElementById('cartCount');
+            const toggleCartCount = document.getElementById('toggleCartCount');
+            const navPesananCount = document.getElementById('navPesananCount');
+
+            if (cartCount && toggleCartCount && navPesananCount) {
+                const isNavbarExpanded = document.querySelector('.navbar-toggler').getAttribute('aria-expanded') === 'true';
+
+                if (totalPesanan > 0) {
+                    cartCount.innerText = totalPesanan;
+                    toggleCartCount.innerText = totalPesanan;
+                    navPesananCount.innerText = totalPesanan;
+
+                    if (isNavbarExpanded) {
+                        toggleCartCount.style.display = 'none';
+                    } else {
+                        toggleCartCount.style.display = 'block';
+                        navPesananCount.style.display = 'none';
+                    }
+                } else {
+                    cartCount.style.display = 'none';
+                    toggleCartCount.style.display = 'none';
+                    navPesananCount.style.display = 'none';
+                }
+            }
+        }
+
+        $('.navbar-toggler').on('click', function () {
+            isNavbarExpanded = $(this).attr('aria-expanded') === 'true';
+            const toggleBadge = $('#toggleBadge');
+            const keranjangBadge = $('#keranjangBadge');
+
+            if (isNavbarExpanded) {
+                toggleBadge.show();
+            } else {
+                toggleBadge.hide();
+                keranjangBadge.show();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            LoadTable();
+        });
+
+        async function LoadTable() {
+            try {
+                const data = await $.ajax({
+                    url: "/load_data_index",
+                    type: "GET",
+                });
+                $("#place_for_xrc23c").html(data);
+                updateEventListeners(); // Update event listeners after loading new data
+            } catch (error) {
+                console.log("error", error);
+            }
+        }
+
+        function updateNotification() {
+            const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]'))
+                .reduce((total, input) => total + parseInt(input.value), 0);
+            const toggleBadge = document.getElementById('toggleBadge');
+            const keranjangBadge = document.getElementById('keranjangBadge');
+        
+            if (totalPesanan > 0) {
+                toggleBadge.innerText = totalPesanan;
+                keranjangBadge.innerText = totalPesanan;
+        
+                if (window.innerWidth >= 992) { // Desktop view
+                    keranjangBadge.style.display = 'flex';
+                    toggleBadge.style.display = 'none';
+                } else { // Mobile view
+                    if (isNavbarExpanded) {
+                        toggleBadge.style.display = 'none';
+                        keranjangBadge.style.display = 'flex';
+                    } else {
+                        toggleBadge.style.display = 'flex';
+                        keranjangBadge.style.display = 'none';
+                    }
+                }
+            } else {
+                toggleBadge.style.display = 'none';
+                keranjangBadge.style.display = 'none';
+            }
+        }
+
+        document.querySelector('.navbar-toggler').addEventListener('click', function () {
+            isNavbarExpanded = this.getAttribute('aria-expanded') === 'false';
+            updateNotification();
+        });
+
+        function adjustItemQuantity(item, adjustment) {
+            const quantityInput = item.querySelector('input[type="text"]');
+            const maxQuantity = quantityInput.getAttribute('maxlength');
+            let newQuantity = parseInt(quantityInput.value) + adjustment;
+
+            if (newQuantity >= 0 && newQuantity <= parseInt(maxQuantity)) {
+                quantityInput.value = newQuantity;
+                updateNotification();
+                tampilkanDetailPesanan();
+                checkPesanan();
+            }
+        }
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const plusButton = item.querySelector('.plus');
+            const minusButton = item.querySelector('.minus');
+
+            plusButton.addEventListener('click', () => adjustItemQuantity(item, 1));
+            minusButton.addEventListener('click', () => adjustItemQuantity(item, -1));
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotification();
+            // Set up event listeners again after content load
+            updateEventListeners();
+            window.addEventListener('resize', updateNotification); // Update notification on window resize
+        });
+
+        function updateEventListeners() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const plusButton = item.querySelector('.plus');
+                const minusButton = item.querySelector('.minus');
+
+                plusButton.addEventListener('click', () => adjustItemQuantity(item, 1));
+                minusButton.addEventListener('click', () => adjustItemQuantity(item, -1));
+            });
+        }
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                LoadTable();
+            }
+            fetch_lock_payment();
+        });
+
+        const socket = io();
+
+        socket.on('update_menu', () => {
+            LoadTable();
+        });
+    </script>
+</body>
+</html>

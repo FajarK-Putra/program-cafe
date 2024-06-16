@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        body {
+            background-image: url("/static/imgaset/bg1.png");
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            height: 100vh; 
+            margin: 0; 
+            padding: 0; 
+            background-attachment: fixed;
+            font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            margin-top: 70px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar .navbar-brand {
+            color: #ffc107;
+            font-family: 'Pacifico', cursive;
+        }
+        .navbar .navbar-nav .nav-link {
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+        .navbar .navbar-nav .nav-link:hover {
+            color: #ffc107;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Pacifico', cursive;
+            color: #343a40;
+        }
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 15px;
+        }
+        .table img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .alert {
+            margin-top: 20px;
+        }
+        .btn {
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn i {
+            margin-right: 5px;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-primary:focus, .btn-primary:active {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-danger:focus, .btn-danger:active {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #117a8b;
+            border-color: #10707f;
+        }
+        .btn-info:focus, .btn-info:active {
+            background-color: #17a2b8 !important;
+            border-color: #17a2b8 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #ffbd09;
+            border-color: #ffbd09;
+        }
+        .btn-edit:focus, .btn-edit:active {
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-delete {
+            background-color: #867e7e;
+            border-color: #867e7e;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #635f5f;
+            border-color: #746e6e;
+        }
+        .btn-delete:focus, .btn-delete:active {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+            transition: background-color 0.3s ease;
+        }
+        .highlight {
+            background-color: #ffc107;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 1200px) {
+            .container {
+                margin-top: 50px;
+                padding: 25px;
+            }
+            .table th, .table td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                margin-top: 40px;
+                padding: 20px;
+            }
+            .table th, .table td {
+                padding: 8px;
+            }
+            .table img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 30px;
+                padding: 15px;
+            }
+            .table th, .table td {
+                padding: 6px;
+            }
+            .table img {
+                width: 40px;
+                height: 40px;
+            }
+            .navbar .navbar-nav .nav-link {
+                text-align: left; /* Align nav links to the left */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                margin-top: 20px;
+                padding: 10px;
+            }
+            .header {
+                font-size: 24px;
+            }
+            .table th, .table td {
+                padding: 4px;
+            }
+            .table img {
+                width: 30px;
+                height: 30px;
+            }
+            .navbar .navbar-nav {
+                text-align: left; /* Align nav links to the left */
+                width: 100%;
+            }
+            .navbar .navbar-nav .nav-item {
+                width: 100%;
+            }
+            .navbar .navbar-nav .nav-link {
+                width: 100%;
+                padding: 10px 15px;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/admin">Admin Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/tambah_menu_form"><i class="fas fa-plus"></i> Tambah Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/pesanan"><i class="fas fa-receipt"></i> Pesanan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/antrian"><i class="fas fa-list"></i> Antrian</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/members"><i class="fas fa-users"></i> Data Member</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1>Detail Menu</h1>
+        </div>
+        <div id="place_for_xrc23b"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script>
+        async function LoadTable() {
+            while (true) {
+                try {
+                    const data = await $.ajax({
+                        url: "/load_data_admin",
+                        type: "GET",
+                    });
+                    $("#place_for_xrc23b").html(data);
+                    console.log(data);
+                } catch (error) {
+                    console.log("error", error);
+                }
+                await new Promise(resolve => setTimeout(resolve, 6000));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            LoadTable();
+        });
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                LoadTable();
+            }
+        });
+    </script>
+</body>
+</html>

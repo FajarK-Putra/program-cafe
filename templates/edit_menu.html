@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        body {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            font-family: 'Roboto', sans-serif;
+            color: #495057;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #dee2e6;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-family: 'Pacifico', cursive;
+            color: #343a40;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #343a40;
+        }
+        .form-control, .form-control-file {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ced4da;
+            padding: 10px;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 5px 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+            border-radius: 7px;
+            border: none;
+        }
+        .btn-primary {
+            background-color: #FFC107;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #ffbd09;
+            transform: scale(1.05);
+        }
+        .btn-primary:focus, .btn-primary:active {
+            background-color: #FFC107 !important;
+            border-color: #FFC107 !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: scale(1.05);
+        }
+        .btn-secondary:focus, .btn-secondary:active {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: white !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        .btn-container {
+            text-align: center;
+        }
+        
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 30px;
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .form-control, .form-control-file {
+                padding: 8px;
+            }
+            .btn-primary, .btn-secondary {
+                padding: 5px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                margin-top: 20px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .form-control, .form-control-file {
+                padding: 6px;
+            }
+            .btn-primary, .btn-secondary {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Menu</h1>
+        <form action="/update_menu" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{ menu_item._id }}">
+            
+            <div class="form-group">
+                <label for="nama">Nama Produk:</label>
+                <input type="text" id="nama" name="nama" class="form-control" value="{{ menu_item.nama }}" required>
+            </div>
+            <div class="form-group">
+                <label for="harga">Harga:</label>
+                <input type="text" id="harga" name="harga" class="form-control" value="{{ menu_item.harga }}" required>
+            </div>
+            <div class="form-group">
+                <label for="stok">Stok:</label>
+                <input type="number" id="stok" name="stok" class="form-control" value="{{ menu_item.stok }}" required>
+            </div>
+            <div class="form-group">
+                <label for="gambar">Gambar (upload gambar baru untuk mengganti):</label>
+                <input type="file" id="gambar" name="gambar" class="form-control-file">
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">Update Produk</button>
+                <a href="/admin" class="btn btn-secondary">Kembali</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama Pengguna</th>
+            <th>Tanggal & Jam</th>
+            <th>Status Bayar</th>
+            <th>Metode Pembayaran</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for index, pesanan in enumerate(antrian_items, start=1) %}
+            <tr>
+                <td>{{ index }}</td>
+                <td>{{ pesanan.username }}</td>
+                <td>{{ pesanan.tanggal.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                <td>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <span>{{ 'Sudah Bayar' if pesanan.status_bayar else 'Belum Bayar' }}</span>
+                        {% if not pesanan.status_bayar %}
+                        <button type="button" class="btn btn-pay btn-sm mt-2" onclick="confirmPayment('{{ pesanan._id }}', this)">
+                            Konfirmasi Pembayaran
+                        </button>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>{{ pesanan.metode_pembayaran }}</td>
+                <td>
+                    <button type="button" class="btn btn-ready {{ 'ready' if pesanan.status_siap else '' }} btn-sm" onclick="markAsReady('{{ pesanan._id }}', this)">
+                        {{ 'Sudah Siap' if pesanan.status_siap else 'Belum Siap' }}
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

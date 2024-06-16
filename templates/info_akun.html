@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Akun</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: none;
+            max-width: 500px;
+            width: 100%;
+        }
+        .card-header {
+            background: linear-gradient(155deg, rgb(226, 196, 27), #6c757d);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 20px;
+            background: white;
+        }
+        .info-group {
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 15px;
+        }
+        .info-group .icon {
+            font-size: 1.5rem;
+            color: rgb(226, 196, 27);
+        }
+        .info-group .label, .info-group .value {
+            font-size: 1rem;
+            color: #000000;
+        }
+        .btn-custom {
+            background-color: rgb(226, 196, 27);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-custom:hover {
+            background-color: rgb(170, 160, 160);
+            transform: scale(1.05);
+        }
+        .btn-custom:focus,
+        .btn-custom:active {
+            outline: none;
+            box-shadow: none;
+        }
+        .navbar {
+            background-color: #343a40;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        
+        .navbar.scrolled {
+            background-color: #343a40;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-toggler {
+            transition: transform 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: -100%;
+            background-color: rgb(226, 196, 27);
+            transition: left 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover::before {
+            left: 0;
+        }
+        .modal-header {
+            border-bottom: none;
+            justify-content: center;
+        }
+        .modal-footer {
+            border-top: none;
+        }
+        .modal-content {
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+            font-size: 1.5rem;
+        }
+        .alert {
+            display: none;
+        }
+        @media (max-width: 576px) {
+            .card-header {
+                font-size: 1.2rem;
+                padding: 15px;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .info-group {
+                grid-template-columns: auto 1fr;
+            }
+            .btn-custom {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body data-is-logged-in="{{ is_logged_in }}">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/member">CAFE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if session['username'] %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/member" id="member">
+                        <i class="fa fa-bars"></i> Menu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/info_akun" id="info_akun">
+                        <i class="fas fa-user-alt"></i> Akun
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/riwayatpesanan" id="pesananAnda">
+                        <i class="fas fa-receipt"></i> Pesanan
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="keranjangBaru" onclick="fetch_lock_payment();toggleDetailPesanan()">
+                        <i class="fas fa-shopping-cart"></i> Check Out
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Detail Akun
+            </div>
+            <div class="card-body">
+                <div class="info-group">
+                    <i class="fas fa-user icon"></i>
+                    <div>
+                        <div class="label">Username</div>
+                        <div class="value">{{ user.username }}</div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <i class="fas fa-envelope icon"></i>
+                    <div>
+                        <div class="label">Email</div>
+                        <div class="value">{{ user.email }}</div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <i class="fas fa-phone icon"></i>
+                    <div>
+                        <div class="label">Nomor HP</div>
+                        <div class="value">{{ user.phone }}</div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <i class="fas fa-calendar-alt icon"></i>
+                    <div>
+                        <div class="label">Tanggal Bergabung</div>
+                        <div class="value" id="join_date">{{ user.join_date }}</div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn-custom" data-toggle="modal" data-target="#editProfileModal">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert" id="errorAlert">
+                        Terjadi kesalahan saat menyimpan perubahan.
+                    </div>
+                    <form id="editProfileForm">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Nomor HP</label>
+                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" value="**********" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn-custom">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const joinDateElement = document.getElementById('join_date');
+            const joinDate = new Date(joinDateElement.textContent);
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = joinDate.toLocaleDateString('id-ID', options);
+            joinDateElement.textContent = formattedDate;
+        });
+
+        $(document).ready(function() {
+            $('#editProfileForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '/edit_profile',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            window.location.href = '/info_akun';
+                        } else {
+                            $('#errorAlert').show();
+                        }
+                    },
+                    error: function() {
+                        $('#errorAlert').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
