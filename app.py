@@ -10,7 +10,7 @@ import logging
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/images/'
-app.secret_key = 'super_secret_key'
+app.secret_key = 'MBDA_WARNING: Unhandled exception.lling back to the prevc__handler__python'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 socketio = SocketIO(app)
 
@@ -90,7 +90,10 @@ def info_akun():
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')
+    if 'username' in session and session['username'] == 'admin':
+        return render_template('admin.html')
+    else:
+        return redirect("/login")
 
 @app.route('/load_data_admin')
 def load_data_admin():
@@ -272,7 +275,10 @@ def pesanan_anda(pesanan_id):
 
 @app.route('/admin/antrian')
 def antrian():
-    return render_template('antrian.html')
+    if 'username' in session and session['username'] == 'admin':
+        return render_template('antrian.html')
+    else:
+        return redirect("/login")
 
 @app.route('/load_data_antrian')
 def load_data_antrian():
@@ -364,4 +370,4 @@ def admin_members():
         return redirect(url_for('login_page'))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)
