@@ -1,5 +1,5 @@
 import time
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
 from pymongo import MongoClient
 from flask_socketio import SocketIO, emit
 import os
@@ -7,6 +7,8 @@ from werkzeug.utils import secure_filename
 from bson.objectid import ObjectId
 from datetime import datetime
 import logging
+import gridfs
+import io
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/images/'
@@ -21,6 +23,7 @@ client = MongoClient("mongodb+srv://fjrkurnia1112:dU8AIK8XmZB5mQpp@cluster0.hzds
 user_collection = client.user.datapelanggan
 menu = client.menu.minuman
 pesanan_collection = client.menu.pesanan
+fs = gridfs.GridFS(client['your_database_name'])
 
 # Tambahkan enumerate ke Jinja2 environment
 app.jinja_env.globals.update(enumerate=enumerate)
@@ -123,14 +126,13 @@ def tambah_menu():
 
     if gambar and allowed_file(gambar.filename):
         filename = secure_filename(gambar.filename)
-        gambar_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        gambar.save(gambar_path)
+        gambar_id = fs.put(gambar, filename=filename)
 
         menu_item = {
             'nama': nama,
             'harga': harga,
             'stok': stok,
-            'gambar': str(filename)
+            'gambar': gambar_id
         }
 
         menu.insert_one(menu_item)
@@ -138,6 +140,14 @@ def tambah_menu():
         return redirect(url_for('admin', success="ok"))
     else:
         return redirect(url_for('admin', success="not"))
+
+@app.route('/file/<file_id>')
+def get_file(file_id):
+    try:
+        file = fs.get(ObjectId(file_id))
+        return send_file(io.BytesIO(file.read()), mimetype='image/jpeg')
+    except Exception as e:
+        return str(e)
 
 @app.route('/edit_menu', methods=['POST'])
 def edit_menu():
@@ -155,15 +165,14 @@ def update_menu():
 
     if gambar and allowed_file(gambar.filename):
         filename = secure_filename(gambar.filename)
-        gambar_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        gambar.save(gambar_path)
+        gambar_id = fs.put(gambar, filename=filename)
         menu.update_one(
             {'_id': ObjectId(item_id)},
             {'$set': {
                 'nama': nama,
                 'harga': harga,
                 'stok': stok,
-                'gambar': str(filename)
+                'gambar': gambar_id
             }}
         )
     else:
