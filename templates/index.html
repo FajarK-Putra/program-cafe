@@ -10,25 +10,25 @@
     <style>
         body {
             background-image: url("/static/imgaset/bg1.png");
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            height: 100vh; 
-            margin: 0; 
-            padding: 0; 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
             background-attachment: fixed;
             font-family: 'Roboto', sans-serif;
         }
         .container {
             max-width: 900px;
-            margin-top: 100px; /* Adjusted to prevent overlapping with navbar */
+            margin-top: 100px;
             background-color: white;
             padding: 20px;
             background-image: url("/static/imgaset/bg1.png");
-            background-position: center; 
+            background-position: center;
             background-attachment: fixed;
-            background-size: cover; 
-            background-repeat: no-repeat; 
+            background-size: cover;
+            background-repeat: no-repeat;
             border-radius: 10px;
             box-shadow: 0 0 10px #343a40;
         }
@@ -188,19 +188,19 @@
         }
         .btn-primary {
             margin: 2px;
-            background-color: #ff5722; /* Customize the primary button color */
+            background-color: #ff5722;
             border-color: #ff5722;
         }
         .btn-primary:hover {
-            background-color: #e64a19; /* Customize the primary button hover color */
+            background-color: #e64a19;
             border-color: #d84315;
         }
         .btn-secondary {
-            background-color: #6c757d; /* Customize the secondary button color */
+            background-color: #6c757d;
             border-color: #6c757d;
         }
         .btn-secondary:hover {
-            background-color: #5a6268; /* Customize the secondary button hover color */
+            background-color: #5a6268;
             border-color: #545b62;
         }
         .notification {
@@ -246,7 +246,6 @@
             align-items: center;
             justify-content: center;
         }
-
         #keranjangBadge {
             position: absolute;
             top: 50%;
@@ -271,7 +270,6 @@
             <span class="navbar-toggler-icon"></span>
             <span id="toggleBadge" class="badge badge-danger" style="display: none;">0</span>
         </button>
-        
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 {% if session['username'] %}
@@ -316,12 +314,9 @@
             </ul>
         </div>
     </nav>
-    
     <div class="container">
         <div id="place_for_xrc23c"></div>
     </div>
-
-    <!-- Popup Elements -->
     <div id="detailPesanan" class="payment-popup">
         <div class="payment-popup-content">
             <h2>Detail Pesanan</h2>
@@ -336,7 +331,6 @@
             <button class="btn btn-primary next" onclick="togglePembayaran()">Lanjut ke Pembayaran</button>
         </div>
     </div>
-
     <div id="paymentPopup" class="payment-popup">
         <div class="payment-popup-content">
             <h2>Metode Pembayaran</h2>
@@ -372,7 +366,6 @@
             <button id="pesan_sekarang" class="btn btn-primary confirm" onclick="pesanSekarang()">Konfirmasi Pembayaran</button>
         </div>
     </div>
-
     <div id="loginPopup" class="login-popup">
         <div class="login-popup-content">
             <span class="close" onclick="toggleLoginPopup()">&times;</span>
@@ -381,7 +374,6 @@
             <a href="{{ url_for('signup_page') }}" class="btn btn-primary">Sign Up</a>
         </div>
     </div>
-
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -390,18 +382,16 @@
         let intervalID;
         let paymentSelected = false;
         let isNavbarExpanded = false;
-
         const isLoggedIn = document.body.getAttribute('data-is-logged-in') === 'True';
-
         function toggleDetailPesanan() {
             var detailPesanan = document.getElementById('detailPesanan');
             if (detailPesanan.style.display === 'none' || detailPesanan.style.display === '') {
                 detailPesanan.style.display = 'flex';
+                tampilkanDetailPesanan();
             } else {
                 detailPesanan.style.display = 'none';
             }
         }
-
         function togglePembayaran() {
             var paymentPopup = document.getElementById('paymentPopup');
             var detailPesanan = document.getElementById('detailPesanan');
@@ -412,14 +402,12 @@
                 paymentPopup.style.display = 'none';
             }
         }
-
         function togglePembayaranBack() {
             var paymentPopup = document.getElementById('paymentPopup');
             var detailPesanan = document.getElementById('detailPesanan');
             paymentPopup.style.display = 'none';
             detailPesanan.style.display = 'flex';
         }
-
         function toggleLoginPopup() {
             var loginPopup = document.getElementById('loginPopup');
             if (loginPopup.style.display === 'none' || loginPopup.style.display === '') {
@@ -428,7 +416,6 @@
                 loginPopup.style.display = 'none';
             }
         }
-
         function tampilkanDetailPesanan() {
             var detailPesananItems = document.getElementById('detailPesananItems');
             var totalHarga = 0;
@@ -447,7 +434,6 @@
             document.getElementById('totalHarga').innerText = 'Rp. ' + totalHarga.toLocaleString();
             document.getElementById('totalHargaCash').innerText = 'Rp. ' + totalHarga.toLocaleString();
         }
-
         function checkPesanan() {
             const pesananAndaButton = document.getElementById('pesananAnda');
             const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
@@ -457,31 +443,26 @@
                 pesananAndaButton.style.display = 'block';
             }
         }
-
         function showQris() {
             hideAllDetails();
             document.getElementById('qrisDetails').style.display = 'block';
-            setActiveOption('qris');
+            setActiveOption('QRIS');
         }
-
         function showBankDetails() {
             hideAllDetails();
             document.getElementById('bankDetails').style.display = 'block';
-            setActiveOption('rekening_bank');
+            setActiveOption('Rekening Bank');
         }
-
         function showCashDetails() {
             hideAllDetails();
             document.getElementById('cashDetails').style.display = 'block';
-            setActiveOption('cash');
+            setActiveOption('Cash');
         }
-
         function showTransferDetails() {
             hideAllDetails();
             document.getElementById('transferDetails').style.display = 'block';
-            setActiveOption('transfer_antar_bank');
+            setActiveOption('Transfer Antar Bank');
         }
-
         function hideAllDetails() {
             document.querySelectorAll('.payment-details').forEach(div => {
                 div.style.display = 'none';
@@ -490,7 +471,6 @@
                 label.classList.remove('active');
             });
         }
-
         function setActiveOption(value) {
             document.querySelectorAll('input[name="metode_pembayaran"]').forEach(radio => {
                 if (radio.value === value) {
@@ -501,22 +481,16 @@
                 }
             });
         }
-
         function pesanSekarang() {
             const pesan_btn = document.getElementById("pesan_sekarang");
-        
-            // Periksa apakah metode pembayaran sudah dipilih
             const selectedPaymentMethod = document.querySelector('input[name="metode_pembayaran"]:checked');
             if (!selectedPaymentMethod) {
                 alert("Pilih metode pembayaran terlebih dahulu!");
                 return;
             }
-        
-            // Nonaktifkan tombol dan ubah tampilannya
             pesan_btn.disabled = true;
             pesan_btn.style.backgroundColor = "grey";
             pesan_btn.textContent = "Harap tunggu ...";
-        
             const items = [];
             document.querySelectorAll('.menu-item').forEach(item => {
                 const quantity = parseInt(item.querySelector('input[type="text"]').value);
@@ -530,15 +504,12 @@
                     });
                 }
             });
-        
             const totalHarga = document.getElementById('totalHarga').innerText.replace('Rp. ', '').replace(',', '');
-        
             const orderData = {
                 items: items,
                 total: parseInt(totalHarga),
                 payment_method: selectedPaymentMethod.value
             };
-        
             fetch('/pesan', {
                 method: 'POST',
                 headers: {
@@ -552,31 +523,29 @@
                     window.location.href = `/pesanan_anda/${data.pesanan_id}`;
                 } else if (data.status === 'fail') {
                     alert('Terjadi kesalahan: stok minuman yang anda pesan tidak cukup');
-                    pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
-                    pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
-                    pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+                    pesan_btn.disabled = false;
+                    pesan_btn.style.backgroundColor = "";
+                    pesan_btn.textContent = "Konfirmasi Pembayaran";
                 } else {
                     alert('Terjadi kesalahan: ' + data.message);
-                    pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
-                    pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
-                    pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+                    pesan_btn.disabled = false;
+                    pesan_btn.style.backgroundColor = "";
+                    pesan_btn.textContent = "Konfirmasi Pembayaran";
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Terjadi kesalahan. Silakan coba lagi.');
-                pesan_btn.disabled = false; // Aktifkan kembali tombol jika terjadi kesalahan
-                pesan_btn.style.backgroundColor = ""; // Kembalikan warna tombol
-                pesan_btn.textContent = "Konfirmasi Pembayaran"; // Kembalikan teks tombol
+                pesan_btn.disabled = false;
+                pesan_btn.style.backgroundColor = "";
+                pesan_btn.textContent = "Konfirmasi Pembayaran";
             });
         }
-
         function batalkanPesanan() {
             toggleDetailPesanan();
             resetPesanan();
             tampilkanDetailPesanan();
         }
-
         function resetPesanan() {
             document.querySelectorAll('.menu-item input[type="text"]').forEach(input => {
                 input.value = 0;
@@ -584,7 +553,6 @@
             checkPesanan();
             updateCartCount();
         }
-
         function checkPesananStatus() {
             fetch('/check_pesanan_status', {
                 method: 'GET',
@@ -607,7 +575,6 @@
                 alert('Terjadi kesalahan. Silakan coba lagi.');
             });
         }
-
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -617,7 +584,6 @@
                 notification.remove();
             }, 5000);
         }
-
         function fetch_lock_payment() {
             fetch('/fetch_lock_payment', {
                 method: 'POST',
@@ -632,12 +598,10 @@
                 }
             });
         }
-
         function updateBadges() {
             const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
             const keranjangBadge = document.getElementById('keranjangBadge');
             const toggleBadge = document.getElementById('toggleBadge');
-        
             if (totalPesanan > 0) {
                 if (keranjangBadge) {
                     keranjangBadge.innerText = totalPesanan;
@@ -645,7 +609,6 @@
                 }
                 if (toggleBadge) {
                     toggleBadge.innerText = totalPesanan;
-                    // Hanya tampilkan toggleBadge jika navbar tidak sedang terbuka
                     if (!isNavbarExpanded) {
                         toggleBadge.style.display = 'flex';
                     }
@@ -659,21 +622,17 @@
                 }
             }
         }
-
         function updateCartCount() {
             const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]')).reduce((total, input) => total + parseInt(input.value), 0);
             const cartCount = document.getElementById('cartCount');
             const toggleCartCount = document.getElementById('toggleCartCount');
             const navPesananCount = document.getElementById('navPesananCount');
-
             if (cartCount && toggleCartCount && navPesananCount) {
                 const isNavbarExpanded = document.querySelector('.navbar-toggler').getAttribute('aria-expanded') === 'true';
-
                 if (totalPesanan > 0) {
                     cartCount.innerText = totalPesanan;
                     toggleCartCount.innerText = totalPesanan;
                     navPesananCount.innerText = totalPesanan;
-
                     if (isNavbarExpanded) {
                         toggleCartCount.style.display = 'none';
                     } else {
@@ -687,12 +646,10 @@
                 }
             }
         }
-
         $('.navbar-toggler').on('click', function () {
             isNavbarExpanded = $(this).attr('aria-expanded') === 'true';
             const toggleBadge = $('#toggleBadge');
             const keranjangBadge = $('#keranjangBadge');
-
             if (isNavbarExpanded) {
                 toggleBadge.show();
             } else {
@@ -700,11 +657,9 @@
                 keranjangBadge.show();
             }
         });
-
         document.addEventListener('DOMContentLoaded', function() {
             LoadTable();
         });
-
         async function LoadTable() {
             try {
                 const data = await $.ajax({
@@ -712,26 +667,23 @@
                     type: "GET",
                 });
                 $("#place_for_xrc23c").html(data);
-                updateEventListeners(); // Update event listeners after loading new data
+                updateEventListeners();
             } catch (error) {
                 console.log("error", error);
             }
         }
-
         function updateNotification() {
             const totalPesanan = Array.from(document.querySelectorAll('input[type="text"]'))
                 .reduce((total, input) => total + parseInt(input.value), 0);
             const toggleBadge = document.getElementById('toggleBadge');
             const keranjangBadge = document.getElementById('keranjangBadge');
-        
             if (totalPesanan > 0) {
                 toggleBadge.innerText = totalPesanan;
                 keranjangBadge.innerText = totalPesanan;
-        
-                if (window.innerWidth >= 992) { // Desktop view
+                if (window.innerWidth >= 992) {
                     keranjangBadge.style.display = 'flex';
                     toggleBadge.style.display = 'none';
-                } else { // Mobile view
+                } else {
                     if (isNavbarExpanded) {
                         toggleBadge.style.display = 'none';
                         keranjangBadge.style.display = 'flex';
@@ -745,17 +697,14 @@
                 keranjangBadge.style.display = 'none';
             }
         }
-
         document.querySelector('.navbar-toggler').addEventListener('click', function () {
             isNavbarExpanded = this.getAttribute('aria-expanded') === 'false';
             updateNotification();
         });
-
         function adjustItemQuantity(item, adjustment) {
             const quantityInput = item.querySelector('input[type="text"]');
             const maxQuantity = quantityInput.getAttribute('maxlength');
             let newQuantity = parseInt(quantityInput.value) + adjustment;
-
             if (newQuantity >= 0 && newQuantity <= parseInt(maxQuantity)) {
                 quantityInput.value = newQuantity;
                 updateNotification();
@@ -763,41 +712,32 @@
                 checkPesanan();
             }
         }
-
         document.querySelectorAll('.menu-item').forEach(item => {
             const plusButton = item.querySelector('.plus');
             const minusButton = item.querySelector('.minus');
-
             plusButton.addEventListener('click', () => adjustItemQuantity(item, 1));
             minusButton.addEventListener('click', () => adjustItemQuantity(item, -1));
         });
-
         document.addEventListener('DOMContentLoaded', function() {
             updateNotification();
-            // Set up event listeners again after content load
             updateEventListeners();
-            window.addEventListener('resize', updateNotification); // Update notification on window resize
+            window.addEventListener('resize', updateNotification);
         });
-
         function updateEventListeners() {
             document.querySelectorAll('.menu-item').forEach(item => {
                 const plusButton = item.querySelector('.plus');
                 const minusButton = item.querySelector('.minus');
-
                 plusButton.addEventListener('click', () => adjustItemQuantity(item, 1));
                 minusButton.addEventListener('click', () => adjustItemQuantity(item, -1));
             });
         }
-
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 LoadTable();
             }
             fetch_lock_payment();
         });
-
         const socket = io();
-
         socket.on('update_menu', () => {
             LoadTable();
         });

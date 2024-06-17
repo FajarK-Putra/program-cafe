@@ -16,7 +16,9 @@
             <td>{{ item.nama }}</td>
             <td>Rp. {{ item.harga|int }}</td>
             <td>{{ item.stok }}</td>
-            <td><img src="{{ url_for('static', filename='images/' ~ item.gambar) }}" alt="{{ item.nama }}"></td>
+            <td>
+                <img src="{{ url_for('get_file', file_id=item.gambar) }}" alt="{{ item.nama }}" width="60" height="60">
+            </td>
             <td>
                 <form action="/edit_menu" method="post" style="display:inline;">
                     <input type="hidden" name="id" value="{{ item._id }}">
