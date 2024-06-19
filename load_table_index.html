@@ -1,0 +1,36 @@
+<h2>Menu Minuman</h2>
+{% if menu_items %}
+    <div class="menu">
+        {% for item in menu_items %}
+        <div class="menu-item" style="background-color: rgba(194, 184, 184, 0.507)">
+            {% if item.stok == 0 %}
+                <img style="opacity: 50%;" src="{{ url_for('get_file', file_id=item.gambar) }}" alt="{{ item.nama }}">
+                <div class="menu-item-details">
+                    <h3>{{ item.nama }}</h3>
+                    <p class="price" style="font-weight: bold; color:#000">{{ item.nama }}</p>
+                    <div class="quantity">
+                        <button class="minus" style="background-color: #5a6268;" disabled>-</button>
+                        <input type="text" value="0" readonly>
+                        <button class="plus" style="background-color: #5a6268;" disabled>+</button>
+                    </div>
+                    <div class="overlay">
+                        <img src="{{ url_for('static', filename='imgaset/stokhabis.png') }}" alt="Stok Habis" class="center-image">
+                    </div>
+            {% else %}
+                <img src="{{ url_for('get_file', file_id=item.gambar) }}" alt="{{ item.nama }}">
+                <div class="menu-item-details">
+                    <h3>{{ item.nama }}</h3>
+                    <p class="price" style="font-weight: bold;">Rp. {{ item.harga|int }}</p>
+                    <div class="quantity">
+                        <button class="minus">-</button>
+                        <input type="text" value="0" maxlength="{{item.stok | int}}" readonly>
+                        <button class="plus">+</button>
+                    </div>
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Tidak ada menu</p>
+{% endif %}
