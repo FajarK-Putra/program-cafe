@@ -58,6 +58,10 @@ def login():
     else:
         return render_template('login.html', error="Username, email, nomor HP, atau password salah")
 
+@app.route('/signup_page')
+def signup_page():
+    return render_template('signup.html')
+
 @app.route('/signup', methods=['POST'])
 def signup():
     username = request.form['username']
@@ -79,9 +83,71 @@ def signup():
     })
     return render_template('signup.html', success="Sign up berhasil. Silahkan login.")
 
-@app.route('/signup_page')
-def signup_page():
-    return render_template('signup.html')
+
+@app.route('/admin')
+def admin():
+    if 'username' in session and session['username'] == 'admin':
+        return render_template('admin.html')
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/load_data_admin')
+def load_data_admin():
+    menu_items = list(menu.find())
+    return render_template('/table/load_table_admin.html', menu_items=menu_items)
+
+@app.route('/admin/members')
+def admin_members():
+    if 'username' in session and session['username'] == 'admin':
+        members = list(user_collection.find())
+        return render_template('members.html', members=members)
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/admin/antrian')
+def antrian():
+    if 'username' in session and session['username'] == 'admin':
+        return render_template('antrian.html')
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/load_data_antrian')
+def load_data_antrian():
+    antrian_items = list(pesanan_collection.find().sort("tanggal", 1))
+    for pesanan in antrian_items:
+        if isinstance(pesanan['tanggal'], str):
+            pesanan['tanggal'] = datetime.strptime(pesanan['tanggal'], '%Y-%m-%d %H:%M:%S')
+        pesanan['status_bayar'] = pesanan.get('status_bayar', False)
+        pesanan['metode_pembayaran'] = pesanan.get('payment_method', 'Tidak Diketahui')
+        
+        # Tambahkan log untuk memeriksa data pesanan
+        logging.debug(f"Pesanan: {pesanan}")
+    return render_template('/table/load_table_antrian.html',  antrian_items=antrian_items)
+
+@app.route('/admin/pesanan')
+def pesanan():
+    if 'username' in session and session['username'] == 'admin':
+        pesanan_items = list(pesanan_collection.find())
+        list_items = {}
+        for pesanan in pesanan_items:
+            if isinstance(pesanan.get('tanggal'), str):
+                pesanan['tanggal'] = datetime.strptime(pesanan['tanggal'], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
+            pesanan['status_bayar'] = pesanan.get('status_bayar', False)
+            pesanan['metode_pembayaran'] = pesanan.get('payment_method', 'Tidak Diketahui')  # Pastikan pengambilan metode pembayaran
+            list_items[str(pesanan['_id'])] = pesanan['items']
+        return render_template('pesanan.html', pesanan_items=pesanan_items, list_items=list_items)
+    else:
+        return redirect(url_for('login_page'))
+
+@app.route('/delete_pesanan', methods=['POST'])
+def delete_pesanan():
+    if 'username' in session and session['username'] == 'admin':
+        pesanan_ids = request.form.getlist('pesanan_ids')
+        for pesanan_id in pesanan_ids:
+            pesanan_collection.delete_one({'_id': ObjectId(pesanan_id)})
+        return redirect(url_for('pesanan'))
+    else:
+        return redirect(url_for('login_page'))
 
 @app.route('/info_akun')
 def info_akun():
@@ -96,26 +162,10 @@ def info_akun():
     else:
         return redirect(url_for('login_page'))
 
-@app.route('/admin')
-def admin():
-    if 'username' in session and session['username'] == 'admin':
-        return render_template('admin.html')
-    else:
-        return redirect(url_for('login_page'))
-
-@app.route('/load_data_admin')
-def load_data_admin():
-    menu_items = list(menu.find())
-    return render_template('/table/load_table_admin.html', menu_items=menu_items)
-
 @app.route('/tambah_menu_form')
 def tambah_menu_form():
     return render_template('tambah_menu.html')
 
-@app.route('/load_data_index')
-def load_data_index():
-    menu_items = list(menu.find())
-    return render_template('/table/load_table_index.html', menu_items=menu_items)
 
 @app.route('/tambah_menu', methods=['POST'])
 def tambah_menu():
@@ -141,13 +191,11 @@ def tambah_menu():
     else:
         return redirect(url_for('admin', success="not"))
 
-@app.route('/file/<file_id>')
-def get_file(file_id):
-    try:
-        file = fs.get(ObjectId(file_id))
-        return send_file(io.BytesIO(file.read()), mimetype='image/jpeg')
-    except Exception as e:
-        return str(e)
+@app.route('/load_data_index')
+def load_data_index():
+    menu_items = list(menu.find())
+    return render_template('/table/load_table_index.html', menu_items=menu_items)
+
 
 @app.route('/edit_menu', methods=['POST'])
 def edit_menu():
@@ -194,6 +242,7 @@ def delete_menu():
     socketio.emit('update_menu')  # Emit an update event to all clients
     return redirect(url_for('admin'))
 
+
 @app.route('/member')
 def member():
     menu_items = list(menu.find())
@@ -227,6 +276,14 @@ def edit_profile():
 def logout():
     session.clear()
     return redirect(url_for('login_page'))
+
+@app.route('/file/<file_id>')
+def get_file(file_id):
+    try:
+        file = fs.get(ObjectId(file_id))
+        return send_file(io.BytesIO(file.read()), mimetype='image/jpeg')
+    except Exception as e:
+        return str(e)
 
 @app.route('/pesan', methods=['POST'])
 def pesan():
@@ -287,25 +344,6 @@ def pesanan_anda(pesanan_id):
     else:
         return redirect(url_for('login_page'))
 
-@app.route('/admin/antrian')
-def antrian():
-    if 'username' in session and session['username'] == 'admin':
-        return render_template('antrian.html')
-    else:
-        return redirect(url_for('login_page'))
-
-@app.route('/load_data_antrian')
-def load_data_antrian():
-    antrian_items = list(pesanan_collection.find().sort("tanggal", 1))
-    for pesanan in antrian_items:
-        if isinstance(pesanan['tanggal'], str):
-            pesanan['tanggal'] = datetime.strptime(pesanan['tanggal'], '%Y-%m-%d %H:%M:%S')
-        pesanan['status_bayar'] = pesanan.get('status_bayar', False)
-        pesanan['metode_pembayaran'] = pesanan.get('payment_method', 'Tidak Diketahui')
-        
-        # Tambahkan log untuk memeriksa data pesanan
-        logging.debug(f"Pesanan: {pesanan}")
-    return render_template('/table/load_table_antrian.html',  antrian_items=antrian_items)
 
 @app.route('/mark_as_ready', methods=['POST'])
 def mark_as_ready():
@@ -321,20 +359,6 @@ def mark_as_ready():
     else:
         return jsonify({'status': 'fail'})
 
-@app.route('/admin/pesanan')
-def pesanan():
-    if 'username' in session and session['username'] == 'admin':
-        pesanan_items = list(pesanan_collection.find())
-        list_items = {}
-        for pesanan in pesanan_items:
-            if isinstance(pesanan.get('tanggal'), str):
-                pesanan['tanggal'] = datetime.strptime(pesanan['tanggal'], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
-            pesanan['status_bayar'] = pesanan.get('status_bayar', False)
-            pesanan['metode_pembayaran'] = pesanan.get('payment_method', 'Tidak Diketahui')  # Pastikan pengambilan metode pembayaran
-            list_items[str(pesanan['_id'])] = pesanan['items']
-        return render_template('pesanan.html', pesanan_items=pesanan_items, list_items=list_items)
-    else:
-        return redirect(url_for('login_page'))
 
 @app.route('/check_order_status/<pesanan_id>', methods=['GET'])
 def check_order_status(pesanan_id):
@@ -364,24 +388,6 @@ def confirm_payment():
         pesanan_collection.update_one({'_id': ObjectId(pesanan_id)}, {'$set': {'status_bayar': True}})
         return jsonify({'status': 'success'})
     return jsonify({'status': 'fail'})
-
-@app.route('/delete_pesanan', methods=['POST'])
-def delete_pesanan():
-    if 'username' in session and session['username'] == 'admin':
-        pesanan_ids = request.form.getlist('pesanan_ids')
-        for pesanan_id in pesanan_ids:
-            pesanan_collection.delete_one({'_id': ObjectId(pesanan_id)})
-        return redirect(url_for('pesanan'))
-    else:
-        return redirect(url_for('login_page'))
-
-@app.route('/admin/members')
-def admin_members():
-    if 'username' in session and session['username'] == 'admin':
-        members = list(user_collection.find())
-        return render_template('members.html', members=members)
-    else:
-        return redirect(url_for('login_page'))
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
